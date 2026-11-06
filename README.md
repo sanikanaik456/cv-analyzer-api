@@ -54,3 +54,9 @@ The 8 tests replace the model with a fake one, so they need no API key and cost 
 
 \- No authentication or rate limiting yet.
 
+
+## Run with Docker
+docker build -t cv-analyzer-api .
+docker run --rm -p 8000:8000 -e GEMINI_API_KEY cv-analyzer-api
+Then open http://127.0.0.1:8000/docs. The key is passed in from the environment and is not stored in the image.
+I built the image and ran it locally, and checked that /health and /analyze both respond. It is not deployed to a cloud service.
