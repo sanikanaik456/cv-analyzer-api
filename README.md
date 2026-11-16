@@ -2,25 +2,47 @@
 
 
 
+!\[tests](https://github.com/sanikanaik456/cv-analyzer-api/actions/workflows/tests.yml/badge.svg)
+
+
+
 A small REST API (FastAPI) that compares CV text with a job description using the Google Gemini API and returns a match score, matching and missing skills, strengths and suggestions as JSON.
 
 
 
 \## Endpoints
 
-\- GET /health returns {"status": "ok"}
 
-\- POST /analyze takes {"cv\_text": "...", "job\_description": "..."} and returns the analysis
+
+\- `GET /health` returns `{"status": "ok"}`
+
+\- `POST /analyze` takes `{"cv\_text": "...", "job\_description": "..."}` and returns the analysis
 
 
 
 \## Run it
 
+
+
+```
+
 pip install -r requirements.txt
 
-set the environment variable GEMINI\_API\_KEY to your own key
+```
+
+
+
+Set the environment variable `GEMINI\_API\_KEY` to your own key, then:
+
+
+
+```
 
 uvicorn main:app --reload
+
+```
+
+
 
 Then open http://127.0.0.1:8000/docs
 
@@ -28,13 +50,41 @@ Then open http://127.0.0.1:8000/docs
 
 \## Tests
 
+
+
+```
+
 pytest -v
 
-The 8 tests replace the model with a fake one, so they need no API key and cost nothing. They check the response structure, input validation, unusable model answers, out-of-range scores, service failures and a missing key. I also checked the real call by hand.
+```
+
+
+
+The 8 tests replace the model with a fake one, so they need no API key and cost nothing. They check the response structure, input validation, unusable model answers, out-of-range scores, service failures and a missing key. I also checked the real call by hand. The tests run automatically on every push with GitHub Actions.
+
+
+
+\## Run with Docker
+
+
+
+```
+
+docker build -t cv-analyzer-api .
+
+docker run --rm -p 8000:8000 -e GEMINI\_API\_KEY cv-analyzer-api
+
+```
+
+
+
+Then open http://127.0.0.1:8000/docs. The key is passed in from the environment and is not stored in the image. I built the image and ran it locally, and checked that `/health` and `/analyze` both respond. It is not deployed to a cloud service.
 
 
 
 \## Design notes
+
+
 
 \- The model call is a separate function injected into the endpoint, so tests can replace it.
 
@@ -48,15 +98,11 @@ The 8 tests replace the model with a fake one, so they need no API key and cost 
 
 \## Limitations
 
+
+
 \- The score is an AI estimate, not an objective measure.
 
 \- Only the first part of long inputs is sent to the model.
 
 \- No authentication or rate limiting yet.
 
-
-## Run with Docker
-docker build -t cv-analyzer-api .
-docker run --rm -p 8000:8000 -e GEMINI_API_KEY cv-analyzer-api
-Then open http://127.0.0.1:8000/docs. The key is passed in from the environment and is not stored in the image.
-I built the image and ran it locally, and checked that /health and /analyze both respond. It is not deployed to a cloud service.
